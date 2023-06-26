@@ -1,69 +1,67 @@
-let winMsg = 'victory';
-let loseMsg = 'Crushing Defeat';
-let tieMsg = 'tie';
-let playerMove;
-let ComputerMove;
-let results;
+let winMsg = 'Victory';
+let loseMsg = 'Defeat';
+let tieMsg = 'Tie';
+let moveDisplays = document.querySelectorAll(".move-display h2");
+let moveList = ['Rock', 'Paper', 'Scissors'];
+let btns = document.querySelectorAll("button");
+let moves = {};
 
-let moveList = ['Rock', 'Paper', 'Scissor'];
-let calcResult=(move1,move2)=>{
- if(move1==move2){
-  console.log(tieMsg)
- }
- else if(move1=='Rock'&& move2=='Scissor'){
-  console.log(winMsg)
- }
- else if(move1=='Scissor'&& move2=='Rock'){
-  console.log(loseMsg)
- }
- else if(move1=='Rock'&& move2=='Paper'){
-  console.log(loseMsg)
- }
- else if(move1=='Scissor'&& move2=='Paper'){
-  console.log(winMsg)
- }
- else if(move1=='Paper'&& move2=='Rock'){
-  console.log(winMsg)
- }
- else{
-  console.log(loseMsg)
- }
-}
-let randomMove=()=>{
-  return Math.floor(Math.random()*3);
- }
-let endGame=((event)=>{
-  playerMove = event;
-  ComputerMove = moveList[randomMove()];
-  results=calcResult(playerMove,ComputerMove)
-  
-});
-let startGame=()=>{
- //method1
- /*let statusDisplay=document.querySelector('#status-head');
- statusDisplay.textContent='Choose'*/
- //method2
- //document.getElementById('status-head').innerHTML='Choose'
- //difference of += and = in js in context of id and class
- //method3
- let statusDisplay=document.getElementById('status-head');
- statusDisplay.textContent='Choose!';
-
- document.getElementsByClassName('move-display')[0].style.visibility='hidden';
-
-
-let buttons = document.querySelectorAll('button');
-for(let i=0;i<buttons.length;i++){
-    buttons[i].textContent=moveList[i];
-    buttons[i].style.display='inline-block';
-    buttons[i].addEventListener('click',()=>{
-      endGame(moveList[i]);
-    })
+let startGame = () =>{
+    document.getElementById("status-head").innerHTML = "Choose";
+    for (i = 0; i < btns.length; i++) {
+        btns[i].removeEventListener("click", startGame);
+        btns[i].addEventListener("click", endGame);
+        btns[i].style.visibility = 'visible';
+        btns[i].innerHTML = moveList[i];
+        btns[i].style.display = 'inline-block';
+    }
+    for (i = 0; i < moveDisplays.length; i++) {
+        moveDisplays[i].style.visibility = 'hidden';
+    }
 }
 
-
-// needed to call endGame()
-
-
+let endGame = (event) =>{
+    let userText = event.target.innerHTML;
+    let userMove = moveList.indexOf(userText);
+    let comMove = randomMove();
+    let moves = calculate(userMove, comMove);
+    document.getElementById("status-head").innerHTML = moves["Message"];
+    for (i = 0; i < btns.length; i = i + 2) {
+        btns[i].style.visibility = 'hidden';
+    }
+    document.querySelectorAll("button")[1].innerHTML = "Play Again";
+    btns[1].addEventListener("click", startGame);
+    for (i = 0; i < moveDisplays.length; i++) {
+        moveDisplays[i].style.visibility = 'visible';
+    }
+    
+    moveDisplays[0].innerHTML = "Your played " + moveList[parseInt(moves["User"])];
+    moveDisplays[1].innerHTML = "Computer played " + moveList[parseInt(moves["Computer"])];
 }
-startGame()
+
+let randomMove = () =>{
+    return Math.floor(Math.random() * 3);
+}
+
+let calculate = (move1, move2) =>{
+    if (move1 == move2){
+        return {
+            "Message" : tieMsg,
+            "User": move1,
+            "Computer" :move2};
+    } else if ((move1 == "0" && move2 == "2") || (move1 == "1" && move2 == "0") || (move1 == "2" && move2 == "1")){
+        return {
+            "Message": winMsg,
+            "User": move1,
+            "Computer": move2
+        };
+    } else{
+        return {
+            "Message": loseMsg,
+            "User": move1,
+            "Computer": move2
+        };
+    }
+}
+
+document.addEventListener("onload", startGame());
