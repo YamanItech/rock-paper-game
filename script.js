@@ -91,7 +91,10 @@ let startGame=()=>{
  let statusDisplay=document.getElementById('status-head');
  statusDisplay.textContent='Choose!';
 
-document.getElementsByClassName('move-display')[0].style.visibility='hidden';
+ for (let i=0;i<moveDisplay.length;i++){
+  moveDisplay[i].style.visibility='hidden';
+  
+}
 
 for(let i=0;i<buttons.length;i++){
     buttons[i].textContent=moveList[i];
